@@ -23,7 +23,7 @@ $zipName = "$packageName-{$xml->version}-{$xml->release}.zip";
 echo "Package name: $packageName\n";
 echo "Archive name: $zipName\n";
 
-`cd $packageDir/ ; zip -r $zipName ./ -x "./.git/*"`;
+`cd $packageDir/ ; zip -r $zipName ./ -x "./.git/*" -x Capfile`;
 `mv $packageDir/$zipName ./`;
 
 echo "Done.\n";
