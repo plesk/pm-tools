@@ -17,7 +17,7 @@ if [ ! -f meta.xml ]; then
     exit 2
 fi
 
-MODULE=`cat meta.xml | grep '<id>' | sed -e 's/.\+>\([^<]\+\)<.\+/\1/'`
+MODULE=`cat meta.xml | grep '<id>' | sed -E -e 's/.+>([^<]+)<.+/\1/g'`
 
 echo "Syncing module $MODULE"
 echo "---"
