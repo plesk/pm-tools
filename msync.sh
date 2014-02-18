@@ -22,6 +22,19 @@ MODULE=`cat meta.xml | grep '<id>' | sed -E -e 's/.+>([^<]+)<.+/\1/g'`
 echo "Syncing module $MODULE"
 echo "---"
 
-rsync -rva htdocs/* root@$HOST:/usr/local/psa/admin/htdocs/modules/$MODULE/ --exclude .svn
-rsync -rva plib/* root@$HOST:/usr/local/psa/admin/plib/modules/$MODULE/ --exclude .svn
+[ -d htdocs ] && rsync -rva htdocs/* root@$HOST:/usr/local/psa/admin/htdocs/modules/$MODULE/
+[ -d plib ] && rsync -rva plib/* root@$HOST:/usr/local/psa/admin/plib/modules/$MODULE/
+
+if [ -d sbin ]; then
+    rsync -rva sbin/* root@$HOST:/usr/local/psa/admin/sbin/modules/$MODULE/
+    ssh root@$HOST "chmod +x /usr/local/psa/admin/sbin/modules/$MODULE/*"
+    ssh root@$HOST "chown root:psaadm /usr/local/psa/admin/sbin/modules/$MODULE/*"
+    ssh root@$HOST "mkdir -p /usr/local/psa/admin/bin/modules/$MODULE/"
+    pushd sbin
+        for FILE in `ls *`; do
+            ssh root@$HOST "ln -sf ../../../sbin/mod_wrapper /usr/local/psa/admin/bin/modules/$MODULE/$FILE"
+        done
+    popd
+fi
+
 rsync -rva meta.xml root@$HOST:/usr/local/psa/admin/plib/modules/$MODULE/
